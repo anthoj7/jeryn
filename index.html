@@ -1,42 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Portfolio</title>
-    <link rel="stylesheet" href="styles.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.7.1/css/all.css"
+      integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.min.js"
+      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://unpkg.com/magic-grid/dist/magic-grid.min.js"></script>
+    <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+    <div id="loading">
+        <div id="spinner"></div>
+    </div>
     <header>
-        <h1 class="3d-text">Welcome to My Portfolio</h1>
+        <h1 class="3d-text" data-text="Welcome to My Portfolio">Welcome to My Portfolio</h1>
         <nav>
             <ul>
                 <li><a href="#about">About</a></li>
                 <li><a href="#projects">Projects</a></li>
+                <li><a href="#blog_section">Blog</a></li>
                 <li><a href="#contact">Contact</a></li>
             </ul>
         </nav>
     </header>
 
     <section id="about">
-        <h2 class="3d-text">About Me</h2>
+        <h2 class="3d-text" data-text="About Me">About Me</h2>
         <p>Hello! I'm [Your Name], a passionate developer with skills in [Your Skills].</p>
     </section>
 
     <section id="projects">
-        <h2 class="3d-text">Projects</h2>
+        <h2 class="3d-text" data-text="Projects">Projects</h2>
         <div class="project">
-            <h3 class="3d-text">Project 1</h3>
+            <h3 class="3d-text" data-text="Project 1">Project 1</h3>
             <p>Description of project 1.</p>
         </div>
         <div class="project">
-            <h3 class="3d-text">Project 2</h3>
+            <h3 class="3d-text" data-text="Project 2">Project 2</h3>
             <p>Description of project 2.</p>
         </div>
     </section>
 
+    <section id="blog_section">
+        <h2 class="3d-text" data-text="Blog">Blog</h2>
+        <div id="blogs"></div>
+    </section>
+
     <section id="contact">
-        <h2 class="3d-text">Contact Me</h2>
+        <h2 class="3d-text" data-text="Contact Me">Contact Me</h2>
         <p>Email: <a href="mailto:your.email@example.com">your.email@example.com</a></p>
         <p>LinkedIn: <a href="https://www.linkedin.com/in/yourprofile">yourprofile</a></p>
     </section>
@@ -44,5 +69,68 @@
     <footer>
         <p>&copy; 2024 [Your Name]. All rights reserved.</p>
     </footer>
+
+    <script type="text/javascript">
+        setTimeout(function() {
+            document.getElementById("loading").classList.add("animated");
+            document.getElementById("loading").classList.add("fadeOut");
+            setTimeout(function() {
+                document.getElementById("loading").classList.remove("animated");
+                document.getElementById("loading").classList.remove("fadeOut");
+                document.getElementById("loading").style.display = "none";
+            }, 800);
+        }, 1500);
+        $.getJSON("blog.json", function(blog) {
+            blog = blog || [];
+            if (blog.length == 0) {
+                return (document.getElementById("blog_section").style.display =
+                "none");
+            }
+            for (var i = 0; i < blog.length; i++) {
+                $("#blogs").append(`
+                <a href="./blog/${blog[i].url_title}/" target="_blank">
+                    <section>
+                        <img src="./blog/${blog[i].url_title}/${blog[i].top_image}">
+                        <div class="blog_container">
+                            <div class="section_title">${blog[i].title}</div>
+                            <div class="about_section">
+                                ${blog[i].sub_title}
+                            </div>
+                        </div>
+                    </section>
+                </a>
+                `);
+            }
+        }).fail(function() {
+            return (document.getElementById("blog_section").style.display = "none");
+        });
+    </script>
+
+    <script>
+        const magicProjectsGrid = new MagicGrid({
+            container: "#work_section",
+            animate: false,
+            gutter: 30, // default gutter size
+            static: true,
+            useMin: false,
+            maxColumns: 2,
+            useTransform: true
+        });
+
+        const magicForksGrid = new MagicGrid({
+            container: "#forks_section",
+            animate: false,
+            gutter: 30, // default gutter size
+            static: true,
+            useMin: false,
+            maxColumns: 2,
+            useTransform: true
+        });
+
+        $("document").ready(() => {
+            magicProjectsGrid.listen();
+            magicForksGrid.listen();
+        });
+    </script>
 </body>
 </html>
